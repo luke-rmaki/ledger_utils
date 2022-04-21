@@ -12,9 +12,8 @@ export type ParsedTransaction = {
   expenseLine: string;
 };
 
-
 export type CommonTransaction = {
   name: string;
   match: string;
   dest: string;
-}
+};

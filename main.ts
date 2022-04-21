@@ -8,7 +8,7 @@ async function main() {
   const csv = await loadCSV();
   const json = csvToJson(csv);
   const formatted = await format(json);
-  await output(formatted)
+  await output(formatted);
 }
 
 main();
