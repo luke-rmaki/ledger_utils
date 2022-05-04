@@ -1,16 +1,26 @@
-# BANK STATEMENT TO LEDGER
+# LEDGER TOOLS
+
+Some basic utilities to work with a ledger compatable journal file.
+
+```bash
+$ ./ledger_utils
+```
+
+## Features:
+
+- Import bank statement to journal
+- Sort journal by date
+- Automatically assign common transactions
+
+_**NOTE: This is a WIP, so make a copy of journal file just in case**_
+
+<br />
+
+### Import bank statement
 
 Takes in a bank statement in CSV format and converts to
 [ledger-cli](https://www.ledger-cli.org/) readable format and inserts into
 journal.
-
-```bash
-$ deno run --allow-read --allow-env --unstable --allow-write main.ts "account:name"
-```
-
-where account name is the name of the account the bank statement relates to
-
-## CSV Statement Headers
 
 The parser expects a CSV formatted as follows:
 
@@ -19,23 +29,50 @@ The parser expects a CSV formatted as follows:
 with Date formatted as "DD/MM/YYYY", and credit, debit, and balance as a
 floating point number with no currency symbol.
 
-## Config
+This option will prompt for a source account (the bank account the transactions
+relates to)
 
-Create a .env file at the project root directory with the following values:
+<br />
+<br />
 
-```
-COMMON="path to your common.yaml file (optional)"
-JOURNAL="path to your ledger journal (required)"
-```
+### Common transactions
 
-## Common.yaml
+When running the program for the first time you can choose to create a
+common.yaml file to enable parsing common/frequent transactions.
 
-You can optionally provide a common.yaml file in the .env file that list common
-transactions to autocomplete. The yaml file must be formatted as follows:
+The file is created in the same directory as the config.json file:
+
+- Unix: ~/.stl
+- Windows: C:/users/User/.stl
+
+E.g
 
 ```yaml
-commonTransactions:
-  - name: "Transaction name"
-    match: "String to match in bank statement description"
-    dest: "The account the transaction is made to"
+- name: "Netflix Subscription"
+  match: "netflix"
+  dest: "Expenses:Subscriptions:Netflix"
 ```
+
+would match a transaction with a description containing the word "netflix" (case
+insensitive) and output the following (assume the date is 2022/05/04, the source
+account provided is Assets:Bank:Checking:Everyday, and the amount on the
+statement is $16):
+
+```
+2022/05/04   Netflix Subscription
+  Assets:Bank:Checking:Everyday     $-16.00
+  Expenses:Subscriptions:Netflix     $16.00
+```
+
+<br />
+
+---
+
+<br />
+
+## TODO
+
+- [ ] Make a copy of the ledger file before running if needing to revert
+- [ ] Allow user to change journal path programmatically
+- [ ] Flag duplicate transactions (ID by date, amount, and account)
+- [ ] Add common transactions via CLI
